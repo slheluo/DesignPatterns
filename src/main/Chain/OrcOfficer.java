@@ -20,44 +20,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
-
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+package main.Chain;
 
 /**
- * InMemory Log Appender Util.
+ * 待处理对象 TODO sl
+ * OrcOfficer
+ *
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class OrcOfficer extends RequestHandler {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
-  }
-
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  public OrcOfficer(RequestHandler handler) {
+    super(handler);
   }
 
   @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
+  public void handleRequest(Request req) {
+    if (req.getRequestType().equals(RequestType.TORTURE_PRISONER)) {
+      printHandling(req);
+      req.markHandled();
+    } else {
+      super.handleRequest(req);
+    }
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
+  @Override
+  public String toString() {
+    return "Orc officer";
   }
 
-  public int getLogSize() {
-    return log.size();
-  }
 }

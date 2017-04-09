@@ -20,44 +20,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
-
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+package main.Visitor;
 
 /**
- * InMemory Log Appender Util.
+ * 
+ * Visitor pattern defines mechanism to apply operations on nodes in hierarchy. New operations can
+ * be added without altering the node interface.
+ * <p>
+ * In this example there is a unit hierarchy beginning from {@link Commander}. This hierarchy is
+ * traversed by visitors. {@link SoldierVisitor} applies its operation on {@link Soldier}s,
+ * {@link SergeantVisitor} on {@link Sergeant}s and so on.
+ * 
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class App {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
-  }
+  /**
+   * Program entry point
+   * 
+   * @param args command line args
+   */
+  public static void main(String[] args) {
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
-  }
+    Commander commander =
+        new Commander(new Sergeant(new Soldier(), new Soldier(), new Soldier()), new Sergeant(
+            new Soldier(), new Soldier(), new Soldier()));
+    commander.accept(new SoldierVisitor());
+    commander.accept(new SergeantVisitor());
+    commander.accept(new CommanderVisitor());
 
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
-  }
-
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
   }
 }

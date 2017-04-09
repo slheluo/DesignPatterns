@@ -20,44 +20,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package main.Templatemethod;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * InMemory Log Appender Util.
+ * 
+ * StealingMethod defines skeleton for the algorithm.
+ * 
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public abstract class StealingMethod {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
-  }
+  private static final Logger LOGGER = LoggerFactory.getLogger(StealingMethod.class);
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
-  }
+  public abstract String pickTarget();
 
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
-  }
+  public abstract void confuseTarget(String target);
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
+  public abstract void stealTheItem(String target);
 
-  public int getLogSize() {
-    return log.size();
+  /**
+   * Steal
+   */
+  public void steal() {
+    String target = pickTarget();
+    LOGGER.info("The target has been chosen as {}.", target);
+    confuseTarget(target);
+    stealTheItem(target);
   }
 }

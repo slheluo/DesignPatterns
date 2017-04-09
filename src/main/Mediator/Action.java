@@ -20,44 +20,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
-
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+package main.Mediator;
 
 /**
- * InMemory Log Appender Util.
+ * 
+ * Action enumeration.
+ *
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public enum Action {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
+  HUNT("hunted a rabbit", "arrives for dinner"), TALE("tells a tale", "comes to listen"), GOLD(
+      "found gold", "takes his share of the gold"), ENEMY("spotted enemies", "runs for cover"), NONE(
+      "", "");
+
+  private String title;
+  private String description;
+
+  Action(String title, String description) {
+    this.title = title;
+    this.description = description;
   }
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  public String getDescription() {
+    return description;
   }
 
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
-  }
-
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
+  public String toString() {
+    return title;
   }
 }

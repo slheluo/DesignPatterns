@@ -20,44 +20,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package test.Interpreter;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
+import main.Interpreter.MinusExpression;
+import main.Interpreter.NumberExpression;
 
-import java.util.LinkedList;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 import java.util.List;
 
-import org.slf4j.LoggerFactory;
-
-
 /**
- * InMemory Log Appender Util.
+ * Date: 12/14/15 - 12:08 PM
+ *
+ * @author Jeroen Meulemeester
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+@RunWith(Parameterized.class)
+public class MinusExpressionTest extends ExpressionTest<MinusExpression> {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
+  /**
+   * Create a new set of test entries with the expected result
+   *
+   * @return The list of parameters used during this test
+   */
+  @Parameters
+  public static List<Object[]> data() {
+    return prepareParameters((f, s) -> f - s);
   }
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  /**
+   * Create a new test instance using the given test parameters and expected result
+   *
+   * @param first  The first expression parameter
+   * @param second The second expression parameter
+   * @param result The expected result
+   */
+  public MinusExpressionTest(final NumberExpression first, final NumberExpression second, final int result) {
+    super(first, second, result, "-", MinusExpression::new);
   }
 
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
-  }
-
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
-  }
 }

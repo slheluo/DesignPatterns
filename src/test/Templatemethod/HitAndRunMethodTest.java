@@ -20,44 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package test.Templatemethod;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+import main.Templatemethod.HitAndRunMethod;
 
 /**
- * InMemory Log Appender Util.
+ * Date: 12/30/15 - 18:12 PM
+ *
+ * @author Jeroen Meulemeester
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class HitAndRunMethodTest extends StealingMethodTest<HitAndRunMethod> {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
+  /**
+   * Create a new test for the {@link HitAndRunMethod}
+   */
+  public HitAndRunMethodTest() {
+    super(
+        new HitAndRunMethod(),
+        "old goblin woman",
+        "The target has been chosen as old goblin woman.",
+        "Approach the old goblin woman from behind.",
+        "Grab the handbag and run away fast!"
+    );
   }
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
-  }
-
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
-  }
-
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
-  }
 }

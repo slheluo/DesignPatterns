@@ -20,44 +20,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package main.observer.Generic;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
 import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * InMemory Log Appender Util.
+ * 观察者 TODO sl
+ * Generic observer inspired by Java Generics and Collection by Naftalin & Wadler
+ *
+ * @param <S> Subject
+ * @param <O> Observer
+ * @param <A> Argument type
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public abstract class Observable<S extends Observable<S, O, A>, O extends Observer<S, O, A>, A> {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
+  protected List<O> observers;
+
+  public Observable() {
+    this.observers = new CopyOnWriteArrayList<>();
   }
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  public void addObserver(O observer) {
+    this.observers.add(observer);
   }
 
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
+  public void removeObserver(O observer) {
+    this.observers.remove(observer);
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
+  /**
+   * Notify observers
+   */
+  @SuppressWarnings("unchecked")
+  public void notifyObservers(A argument) {
+    for (O observer : observers) {
+      observer.update((S) this, argument);
+    }
   }
 }

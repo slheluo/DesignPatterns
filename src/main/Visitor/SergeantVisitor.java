@@ -20,44 +20,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package main.Visitor;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * InMemory Log Appender Util.
+ * 
+ * SergeantVisitor
+ *
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class SergeantVisitor implements UnitVisitor {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
-  }
+  private static final Logger LOGGER = LoggerFactory.getLogger(SergeantVisitor.class);
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  @Override
+  public void visitSoldier(Soldier soldier) {
+    // Do nothing
   }
 
   @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
+  public void visitSergeant(Sergeant sergeant) {
+    LOGGER.info("Hello {}", sergeant);
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
+  @Override
+  public void visitCommander(Commander commander) {
+    // Do nothing
   }
 }

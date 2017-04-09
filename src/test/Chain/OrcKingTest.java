@@ -20,44 +20,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package test.Chain;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
+import main.Chain.OrcKing;
+import main.Chain.Request;
+import main.Chain.RequestType;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.junit.Test;
 
-import org.slf4j.LoggerFactory;
-
+import static org.junit.Assert.assertTrue;
 
 /**
- * InMemory Log Appender Util.
+ * Date: 12/6/15 - 9:29 PM
+ *
+ * @author Jeroen Meulemeester
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class OrcKingTest {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
+  /**
+   * All possible requests
+   */
+  private static final Request[] REQUESTS = new Request[]{
+      new Request(RequestType.DEFEND_CASTLE, "Don't let the barbarians enter my castle!!"),
+      new Request(RequestType.TORTURE_PRISONER, "Don't just stand there, tickle him!"),
+      new Request(RequestType.COLLECT_TAX, "Don't steal, the King hates competition ..."),
+  };
+
+  @Test
+  public void testMakeRequest() throws Exception {
+    final OrcKing king = new OrcKing();
+
+    for (final Request request : REQUESTS) {
+      king.makeRequest(request);
+      assertTrue(
+          "Expected all requests from King to be handled, but [" + request + "] was not!",
+          request.isHandled()
+      );
+    }
+
   }
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
-  }
-
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
-  }
-
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
-  }
 }

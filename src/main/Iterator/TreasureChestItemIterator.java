@@ -20,44 +20,59 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package main.Iterator;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.LoggerFactory;
-
-
 /**
- * InMemory Log Appender Util.
+ * 迭代器实例 TODO sl
+ * TreasureChestItemIterator
+ *
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class TreasureChestItemIterator implements ItemIterator {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
-  }
+  private TreasureChest chest;
+  private int idx;
+  private ItemType type;
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  /**
+   * Constructor
+   */
+  public TreasureChestItemIterator(TreasureChest chest, ItemType type) {
+    this.chest = chest;
+    this.type = type;
+    this.idx = -1;
   }
 
   @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
+  public boolean hasNext() {
+    return findNextIdx() != -1;
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
+  @Override
+  public Item next() {
+    idx = findNextIdx();
+    if (idx != -1) {
+      return chest.getItems().get(idx);
+    }
+    return null;
   }
 
-  public int getLogSize() {
-    return log.size();
+  private int findNextIdx() {
+
+    List<Item> items = chest.getItems();
+    boolean found = false;
+    int tempIdx = idx;
+    while (!found) {
+      tempIdx++;
+      if (tempIdx >= items.size()) {
+        tempIdx = -1;
+        break;
+      }
+      if (type.equals(ItemType.ANY) || items.get(tempIdx).getType().equals(type)) {
+        break;
+      }
+    }
+    return tempIdx;
   }
 }

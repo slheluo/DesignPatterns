@@ -20,44 +20,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
-
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+package main.Iterator;
 
 /**
- * InMemory Log Appender Util.
+ * 
+ * Item
+ *
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class Item {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
-  }
+  private ItemType type;
+  private String name;
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  public Item(ItemType type, String name) {
+    this.setType(type);
+    this.name = name;
   }
 
   @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
+  public String toString() {
+    return name;
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
+  public ItemType getType() {
+    return type;
   }
 
-  public int getLogSize() {
-    return log.size();
+  public final void setType(ItemType type) {
+    this.type = type;
   }
 }

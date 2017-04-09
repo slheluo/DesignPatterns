@@ -20,44 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
-
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+package main.Chain;
 
 /**
- * InMemory Log Appender Util.
+ *  生成职责链，接收请求 TODO sl
+ * OrcKing makes requests that are handled by the chain.
+ * 
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class OrcKing {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
+  RequestHandler chain;
+
+  public OrcKing() {
+    buildChain();
   }
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  private void buildChain() {
+    chain = new OrcCommander(new OrcOfficer(new OrcSoldier(null)));
   }
 
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
+  public void makeRequest(Request req) {
+    chain.handleRequest(req);
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
-  }
 }

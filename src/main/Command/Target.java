@@ -20,44 +20,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package main.Command;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 /**
- * InMemory Log Appender Util.
+ * 
+ * Base class for spell targets.
+ *
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public abstract class Target {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
+  private static final Logger LOGGER = LoggerFactory.getLogger(Target.class);
+
+  private Size size;
+
+  private Visibility visibility;
+
+  public Size getSize() {
+    return size;
   }
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  public void setSize(Size size) {
+    this.size = size;
+  }
+
+  public Visibility getVisibility() {
+    return visibility;
+  }
+
+  public void setVisibility(Visibility visibility) {
+    this.visibility = visibility;
   }
 
   @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
-  }
+  public abstract String toString();
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
+  /**
+   * Print status
+   */
+  public void printStatus() {
+    LOGGER.info("{}, [size={}] [visibility={}]", new Object[]{this, getSize(), getVisibility()});
   }
 }

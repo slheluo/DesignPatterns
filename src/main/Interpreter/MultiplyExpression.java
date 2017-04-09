@@ -20,44 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
-
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+package main.Interpreter;
 
 /**
- * InMemory Log Appender Util.
+ * 
+ * MultiplyExpression
+ *
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class MultiplyExpression extends Expression {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
-  }
+  private Expression leftExpression;
+  private Expression rightExpression;
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  public MultiplyExpression(Expression leftExpression, Expression rightExpression) {
+    this.leftExpression = leftExpression;
+    this.rightExpression = rightExpression;
   }
 
   @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
+  public int interpret() {
+    return leftExpression.interpret() * rightExpression.interpret();
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
+  @Override
+  public String toString() {
+    return "*";
   }
 
-  public int getLogSize() {
-    return log.size();
-  }
 }

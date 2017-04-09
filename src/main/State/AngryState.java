@@ -20,44 +20,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package main.State;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * InMemory Log Appender Util.
+ * 
+ * Angry state.
+ *
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class AngryState implements State {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
-  }
+  private static final Logger LOGGER = LoggerFactory.getLogger(AngryState.class);
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  private Mammoth mammoth;
+
+  public AngryState(Mammoth mammoth) {
+    this.mammoth = mammoth;
   }
 
   @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
+  public void observe() {
+    LOGGER.info("{} is furious!", mammoth);
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
+  @Override
+  public void onEnterState() {
+    LOGGER.info("{} gets angry!", mammoth);
   }
 
-  public int getLogSize() {
-    return log.size();
-  }
 }

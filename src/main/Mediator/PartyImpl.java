@@ -20,44 +20,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package main.Mediator;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.LoggerFactory;
-
-
 /**
- * InMemory Log Appender Util.
+ * 中介实现 TODO sl
+ * Party implementation.
+ *
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class PartyImpl implements Party {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
-  }
+  private final List<PartyMember> members;
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  public PartyImpl() {
+    members = new ArrayList<>();
   }
 
   @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
+  public void act(PartyMember actor, Action action) {
+    for (PartyMember member : members) {
+      if (!member.equals(actor)) {
+        member.partyAction(action);
+      }
+    }
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
+  @Override
+  public void addMember(PartyMember member) {
+    members.add(member);
+    member.joinedParty(this);
   }
 }

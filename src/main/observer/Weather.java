@@ -1,3 +1,5 @@
+package main.observer;
+
 /**
  * The MIT License
  * Copyright (c) 2014-2016 Ilkka Seppälä
@@ -20,44 +22,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * InMemory Log Appender Util.
+ * 
+ * Weather can be observed by implementing {@link WeatherObserver} interface and registering as
+ * listener.
+ * 
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class Weather {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
+  private static final Logger LOGGER = LoggerFactory.getLogger(Weather.class);
+
+  private WeatherType currentWeather;
+  private List<WeatherObserver> observers;
+
+  public Weather() {
+    observers = new ArrayList<>();
+    currentWeather = WeatherType.SUNNY;
   }
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  public void addObserver(WeatherObserver obs) {
+    observers.add(obs);
   }
 
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
+  public void removeObserver(WeatherObserver obs) {
+    observers.remove(obs);
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
+  /**
+   * Makes time pass for weather
+   */
+  public void timePasses() {
+    WeatherType[] enumValues = WeatherType.values();
+    currentWeather = enumValues[(currentWeather.ordinal() + 1) % enumValues.length];
+    LOGGER.info("The weather changed to {}.", currentWeather);
+    notifyObservers();
   }
 
-  public int getLogSize() {
-    return log.size();
+  private void notifyObservers() {
+    for (WeatherObserver obs : observers) {
+      obs.update(currentWeather);
+    }
   }
 }

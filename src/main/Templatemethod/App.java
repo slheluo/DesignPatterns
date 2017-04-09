@@ -20,44 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
-
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+package main.Templatemethod;
 
 /**
- * InMemory Log Appender Util.
+ * 
+ * Template Method defines a skeleton for an algorithm. The algorithm subclasses provide
+ * implementation for the blank parts.
+ * <p>
+ * In this example {@link HalflingThief} contains {@link StealingMethod} that can be changed. First
+ * the thief hits with {@link HitAndRunMethod} and then with {@link SubtleMethod}.
+ * 
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class App {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
-  }
-
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
-  }
-
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
-  }
-
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
+  /**
+   * Program entry point
+   * 
+   * @param args command line args
+   */
+  public static void main(String[] args) {
+    HalflingThief thief = new HalflingThief(new HitAndRunMethod());
+    thief.steal();
+    thief.changeMethod(new SubtleMethod());
+    thief.steal();
   }
 }

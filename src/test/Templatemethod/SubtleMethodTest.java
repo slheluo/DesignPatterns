@@ -20,44 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package test.Templatemethod;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+import main.Templatemethod.SubtleMethod;
 
 /**
- * InMemory Log Appender Util.
+ * Date: 12/30/15 - 18:19 PM
+ *
+ * @author Jeroen Meulemeester
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class SubtleMethodTest extends StealingMethodTest<SubtleMethod> {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
+  /**
+   * Create a new test for the {@link SubtleMethod}
+   */
+  public SubtleMethodTest() {
+    super(
+        new SubtleMethod(),
+        "shop keeper",
+        "The target has been chosen as shop keeper.",
+        "Approach the shop keeper with tears running and hug him!",
+        "While in close contact grab the shop keeper's wallet."
+    );
   }
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
-  }
-
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
-  }
-
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
-  }
 }

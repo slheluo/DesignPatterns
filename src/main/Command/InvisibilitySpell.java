@@ -20,44 +20,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
-
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+package main.Command;
 
 /**
- * InMemory Log Appender Util.
+ * 
+ * InvisibilitySpell is a concrete command
+ *
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class InvisibilitySpell extends Command {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
-  }
+  private Target target;
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
+  @Override
+  public void execute(Target target) {
+    target.setVisibility(Visibility.INVISIBLE);
+    this.target = target;
   }
 
   @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
+  public void undo() {
+    if (target != null) {
+      target.setVisibility(Visibility.VISIBLE);
+    }
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
+  @Override
+  public void redo() {
+    if (target != null) {
+      target.setVisibility(Visibility.INVISIBLE);
+    }
   }
 
-  public int getLogSize() {
-    return log.size();
+  @Override
+  public String toString() {
+    return "Invisibility spell";
   }
 }

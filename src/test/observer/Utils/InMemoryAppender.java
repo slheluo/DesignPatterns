@@ -20,17 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package test.observer.Utils;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
 
 /**
  * InMemory Log Appender Util.
@@ -53,11 +51,11 @@ public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
     log.add(eventObject);
   }
 
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
   public int getLogSize() {
     return log.size();
+  }
+
+  public String getLastMessage() {
+    return log.get(log.size() - 1).getFormattedMessage();
   }
 }

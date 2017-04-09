@@ -20,44 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package test.proxy.Utils;
+package main.observer.Generic;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
+import main.observer.WeatherType;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * InMemory Log Appender Util.
+ * 
+ * GWeather
+ *
  */
-public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
-  private List<ILoggingEvent> log = new LinkedList<>();
+public class GWeather extends Observable<GWeather, Race, WeatherType> {
 
-  public InMemoryAppender(Class clazz) {
-    ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);
-    start();
+  private static final Logger LOGGER = LoggerFactory.getLogger(GWeather.class);
+
+  private WeatherType currentWeather;
+
+  public GWeather() {
+    currentWeather = WeatherType.SUNNY;
   }
 
-  public InMemoryAppender() {
-    ((Logger) LoggerFactory.getLogger("root")).addAppender(this);
-    start();
-  }
-
-  @Override
-  protected void append(ILoggingEvent eventObject) {
-    log.add(eventObject);
-  }
-
-  public boolean logContains(String message) {
-    return log.stream().anyMatch(event -> event.getFormattedMessage().equals(message));
-  }
-
-  public int getLogSize() {
-    return log.size();
+  /**
+   * Makes time pass for weather
+   */
+  public void timePasses() {
+    WeatherType[] enumValues = WeatherType.values();
+    currentWeather = enumValues[(currentWeather.ordinal() + 1) % enumValues.length];
+    LOGGER.info("The weather changed to {}.", currentWeather);
+    notifyObservers(currentWeather);
   }
 }
